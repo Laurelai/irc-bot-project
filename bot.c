@@ -6,8 +6,7 @@
 //  Copyright (c) 2012 All rights reserved.
 //
 
-#include <stdio.h>
-#include <mowgli.h>
+#include "bot.h"
 
 mowgli_eventloop_t* base_eventloop;
 
