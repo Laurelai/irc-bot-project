@@ -1,7 +1,7 @@
 MOWGLI_CFLAGS="-I/usr/include/libmowgli-2"
 MOWGLI_LIBS="-lmowgli-2"
 
-SOURCES="bot.c parse.c"
+SOURCES="bot.c parse.c logger.c"
 OBJECTS=""
 for file in $SOURCES; do
 	echo "Compiling $file..."

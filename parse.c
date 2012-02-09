@@ -1,3 +1,11 @@
+//
+//  parse.c
+//  
+//
+//  Created by Laurelai Bailey on 2/7/12.
+//  Copyright (c) 2012. All rights reserved.
+//
+
 #include "bot.h"
 
 /*
@@ -39,6 +47,7 @@ void origin_parse(irc_origin_t *origin, char *origin_str)
 	mowgli_strlcpy(origin->host, i, sizeof origin->host);
 }
 
+#if 0
 /*
  * irc_parse()
  *
@@ -48,5 +57,79 @@ void origin_parse(irc_origin_t *origin, char *origin_str)
  */
 void irc_parse(const char *line)
 {
-
+    char *string = strdup(line);
+    char *token;
+   
+    if (string == NULL)
+        return NULL;
+    
+    strip(string, "\r\n");
+    logger(LOG_RAW, ">> %s", string);
+    
+    token = strtok(string, " ");
+    if (token == NULL)
+        return NULL;
+    
+    if((strncmp(token, ":", 1)) == 0)
+    {
+        event->origin = mowgli_alloc(sizeof(irc_user_t));
+        event->origin = parse_user(token + 1);
+    }
+    else
+    {
+        event->command = token;
+    }
+    
+    if(token != NULL)
+    {
+        if(event->command != NULL)
+        {
+            token = strtok(NULL, "\0");
+            event->data = token;
+        }
+        else
+        {
+            token = strtok(NULL, " ");
+            event->command = token;
+        }
+    }
+    
+    if(token != NULL)
+    {
+        token = strtok(NULL, " ");
+        
+        if (token != NULL)
+        {
+            
+            if ((strncmp(token, ":", 1)) == 0)
+                event->target = token + 1;
+            else
+                event->target = token;
+            
+            if ((strcmp(event->target, me.client->nick)) == 0)
+                event->target = event->origin->nick;
+        }
+    }
+    
+    if ((token != NULL) && (!event->data))
+    {
+        token = strtok(NULL, "\0");
+        if (token != NULL)
+        {
+            if ((strncmp(token, ":", 1)) == 0)
+                event->data = token + 1;
+            else
+                event->data = token;
+        }
+    }
+    
+    if (event != NULL)
+    {
+        mowgli_hook_call(event->command, event);
+    }
+    
+    free(string);
+    
+    return event;
 }
+#endif
